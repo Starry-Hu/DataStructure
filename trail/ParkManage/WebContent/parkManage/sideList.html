@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/pagination.css">
+    <script src="js/jquery-3.3.1.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.pagination.js"></script>
+    <title>停车信息展示</title>
+    <style>
+        table {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <h3>过道信息展示</h3>
+        <h5>总数： <span id="count"></span></h5>
+        
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">车牌号</th>
+                    <th scope="col">过道等候位置下标</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody id="side">
+            </tbody>
+        </table>
+
+        <div class="m-style M-box4" id="pagination"><span class="active">1</span><a href="javascript:;" data-page="2">2</a><a href="javascript:;" data-page="3">3</a><a href="javascript:;" data-page="4">4</a><a href="javascript:;" data-page="5">5</a><a href="javascript:;" class="next">&gt;</a>
+            <input type="text" class="jump-ipt"><a href="javascript:;" class="jump-btn">跳转</a>
+        </div>
+        
+        <!-- 弹出进入停车场的模块层 -->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="myModalLabel">进入停车场</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group row">
+                                <label for="carId" class="col-sm-2 col-form-label">车牌号</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="carId" placeholder="请输入车牌号" required disabled="disabled">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="inTime" class="col-sm-2 col-form-label">进入时间</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="inTime" placeholder="请输入进入时间" required>
+                                </div>
+                            </div>
+                            <button class="btn btn-outline-primary" type="reset">重置</button>
+                            <button class="btn btn-primary" id="submit">提交</button>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal -->
+        </div>
+    </div>
+
+    <script>
+        // $('.M-box4').pagination({
+        //     pageCount: 50,
+        //     jump: true,
+        //     callback: function(api) {
+        //         var data = {
+        //             page: api.getCurrent(),
+        //             name: 'mss',
+        //             say: 'oh'
+        //         };
+        //         console.log(data);
+        //         $.getJSON('https://www.easy-mock.com/mock/58fff7a5739ac1685205ad5d/example/pagination#!method=get', data, function(json) {
+        //             console.log(json);
+        //         });
+        //     }
+        // });
+
+        $('.M-box4').pagination({
+            pageCount: 50,
+            jump: true,
+            coping: true,
+            homePage: '首页',
+            endPage: '末页',
+            prevContent: '上页',
+            nextContent: '下页',
+            callback: function(api) {
+                console.log(api.getCurrent())
+            }
+        });
+
+        window.onload = function() {
+            var path = location.protocol + "//" + window.location.host +
+                "/ParkManage/SideListServlet";
+            $.ajax({
+                type: "get",
+                url: path,
+                dataType: "json",
+                success: function(response) {
+                    //alert(response.msg);
+                    $('#count').text(response.count);
+                    for (var i = 0; i < response.data.length; i++) {
+                    	console.log(i);
+                        if (response.data[i] != null) {
+                            var $td1 = "<th scope='row'>" + response.data[i].carId + "</th>";
+                            var $td2 = "<th>" + i + "</th>";
+                            var $td3 = `<td> <button class="btn btn-info inPark" onclick="test(${response.data[i].carId})">进入</button> </td>`;
+                            var $tr = $("<tr></tr>");
+                            $tr.append($td1 + $td2 + $td3);
+
+                            $('#side').append($tr);
+                        }
+                    }
+                }
+            });
+        }
+        
+        function test(carId){
+            //var carId = $(this).parents('tr').children('th').text();
+            //console.log(carId);
+            $('#myModal #carId').val(carId);
+            $('#myModal').modal('show');
+        }
+        
+        $('.enterPark').click(function(e) {
+            e.preventDefault();
+            var carId = $(this).parents('tr').children('th').text();
+            console.log(carId);
+            $('#myModal #carId').val(carId);
+            $('#myModal').modal('show');
+
+        });
+        
+        $('#myModal #submit').click(function() {
+            var path = location.protocol + "//" + window.location.host +
+                "/ParkManage/ArriveFromSideServlet";
+            $.ajax({
+                type: "POST",
+                url: path,
+                data: {
+                    carId: $('#carId').val(),
+                    inTime: $('#inTime').val()
+                },
+                dataType: "json",
+                success: function(response) {
+                    alert(response.msg);
+                }
+            });
+        })
+    </script>
+</body>
+
+</html>

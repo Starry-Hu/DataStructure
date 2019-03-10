@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/jquery-3.3.1.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <title>添加过道信息</title>
+    <style>
+        body {
+            background-color: #f7f7f9;
+            text-align: center;
+        }
+        
+        form {
+            width: 60%;
+            height: 200px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-top: -100px;
+            margin-left: -30%;
+        }
+    </style>
+</head>
+
+<body class="iframe_web">
+    <div>
+        <form method="POST" id="Form">
+            <div class="form-group row">
+                <label for="carId" class="col-sm-2 col-form-label">停车场大小</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="parkSize" name="parkSize" placeholder="请输入停车场大小" required>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="carId" class="col-sm-2 col-form-label">过道候车大小</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="waitSize" name="waitSize" placeholder="请输入候车大小" required>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="carId" class="col-sm-2 col-form-label">价钱/小时</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="price" name="price" placeholder="请输入停车价格" required>
+                </div>
+            </div>
+            <button class="btn btn-outline-primary" type="reset">重置</button>
+            <button class="btn btn-primary" type="button" id="submit">提交</button>
+        </form>
+    </div>
+
+
+    <script>
+        $('#submit').click(function() {
+            var path = location.protocol + "//" + window.location.host +
+                "/ParkManage/InitServlet";
+            $.ajax({
+                type: "post",
+                url: path,
+                data: {
+                    'parkSize': $('#parkSize').val(),
+                    'waitSize': $('#waitSize').val(),
+                    'price': $('#price').val()
+                },
+                dataType: "json",
+                success: function(response) {
+                	alert(response.msg);
+                }
+            });
+        })
+    </script>
+</body>
+
+</html>
