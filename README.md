@@ -13,6 +13,6 @@
 采用Java为编程语言，开发环境为eclipse oxygen
 仓库一级文件夹下的二级文件夹为对应的包
 
-practice -- 习题练习
-trial -- 实验
-expand -- 扩展题（自己在网上找的题目并上传到OJ平台）
+- practice -- 习题练习
+- trial -- 实验
+- expand -- 扩展题（自己在网上找的题目并上传到OJ平台）
